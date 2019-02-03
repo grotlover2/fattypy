@@ -427,7 +427,8 @@ dd = renpy.DDCharacter(None,
 
                        kind=False,
 
-                       attributes=None)
+                       attributes=None,
+                       img_tag_map=None)
 
 # The character attribute store. A global dictionary is used to hopefully allow for saving in Renpy's store system
 characterAttributes = dict()

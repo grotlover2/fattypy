@@ -57,7 +57,20 @@ class DDCharacter(ADVCharacter):
                     attribute_name = pair.strip()
                     value = ""
 
-                self[attribute_name] = value
+                self[attribute_name] = self.eval_value(value)
+
+        # TODO: Come back and make code that will load the kinds comparator list
+        #  instead of keeping a copy of the raw list
+        self.img_tag_map = get_property("img_tag_map", True)
+
+        # check if the first element of the img_tag_map is a tuple. If it is we can assume the rest are and if not we
+        # can assume only one map was passed
+        if self.img_tag_map is not None:
+            if len(self.img_tag_map) > 0 and isinstance(self.img_tag_map[0], tuple):
+                for c_map in self.img_tag_map:
+                    self.register_comparator(c_map)
+            else:
+                self.register_comparator(self.img_tag_map)
 
     def __setitem__(self, attribute, value):
         # first time through if this character is not in the store add it
@@ -65,9 +78,6 @@ class DDCharacter(ADVCharacter):
             renpy.defaultstore.characterAttributes[self.name] = dict()
 
         attributes_dict = renpy.defaultstore.characterAttributes[self.name]
-
-        # attempt to evaluate the value
-        value = self.eval_value(value)
 
         # only update if the value will change or a new attribute is being added
         if attribute not in attributes_dict.keys() or attributes_dict[attribute] != value:
@@ -115,9 +125,9 @@ class DDCharacter(ADVCharacter):
              transient=False, munge_name=True):
         from renpy.exports import show
 
-        found_img_tag = self.get_img_tag()
+        found_img_tag = tuple(self.get_img_tag().split())
 
-        name = (found_img_tag,) + name[1:]
+        name = found_img_tag + name[1:]
 
         # set the image tag for the display say command if set
         if self.image_tag is not None:
@@ -152,22 +162,26 @@ class DDCharacter(ADVCharacter):
         # check if an image tag was found
         img_tag = self.eval_comparators()
 
-        if img_tag is None and self.defaultImage is not None:
-            img_tag = self.defaultImage
-        else:
-            img_tag = "DDCharacter(" + self.name + ")"
+        # check if a image tag was not found
+        if img_tag is None:
+            if self.defaultImage is not None:
+                img_tag = self.defaultImage
+            else:
+                img_tag = "DDCharacter(" + self.name + ")"
 
         return img_tag.strip()
 
     def eval_value(self, value):
         # check if white space or empty and try to evaluate it to a python type
-        value = value.strip()
-        if not value:
-            value = None
-        else:
-            try:
-                value = ast.literal_eval(value)
-            except ValueError:
-                value = value
+
+        if isinstance(value, unicode):
+            value = value.strip()
+            if not value:
+                value = None
+            else:
+                try:
+                    value = ast.literal_eval(value)
+                except ValueError:
+                    value = value
 
         return value
