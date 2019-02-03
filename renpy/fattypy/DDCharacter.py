@@ -20,7 +20,6 @@
 import ast
 import renpy
 from renpy.character import ADVCharacter, NotSet
-from renpy.fattypy.store import characterAttributes
 
 
 class DDCharacter(ADVCharacter):
@@ -28,7 +27,7 @@ class DDCharacter(ADVCharacter):
 
         self.comparators = list()
         if kind is None:
-            kind = renpy.defaultstore.ddchar
+            kind = renpy.defaultstore.dd
 
         if "image" in properties:
             self.defaultImage = properties["image"]
@@ -62,10 +61,10 @@ class DDCharacter(ADVCharacter):
 
     def __setitem__(self, attribute, value):
         # first time through if this character is not in the store add it
-        if self.name not in characterAttributes.keys():
-            characterAttributes[self.name] = dict()
+        if self.name not in renpy.defaultstore.characterAttributes.keys():
+            renpy.defaultstore.characterAttributes[self.name] = dict()
 
-        attributes_dict = characterAttributes[self.name]
+        attributes_dict = renpy.defaultstore.characterAttributes[self.name]
 
         # attempt to evaluate the value
         value = self.eval_value(value)
@@ -79,7 +78,7 @@ class DDCharacter(ADVCharacter):
                 self.image_tag = self.get_img_tag()
 
     def __getitem__(self, attribute):
-        attributes_dict = characterAttributes.get(self.name)
+        attributes_dict = renpy.defaultstore.characterAttributes.get(self.name)
 
         if attributes_dict is None:
             return None
@@ -87,7 +86,7 @@ class DDCharacter(ADVCharacter):
         return attributes_dict.get(attribute)
 
     def __contains__(self, attribute):
-        attributes_dict = characterAttributes.get(self.name)
+        attributes_dict = renpy.defaultstore.characterAttributes.get(self.name)
 
         if attributes_dict is not None and attribute in attributes_dict.keys():
             return True
@@ -95,7 +94,7 @@ class DDCharacter(ADVCharacter):
         return False
 
     def __delitem__(self, attribute):
-        attributes_dict = characterAttributes.get(self.name)
+        attributes_dict = renpy.defaultstore.characterAttributes.get(self.name)
 
         if attributes_dict is not None:
             del attributes_dict[attribute]
@@ -105,7 +104,7 @@ class DDCharacter(ADVCharacter):
         return True
 
     def __len__(self):
-        attributes_dict = characterAttributes.get(self.name)
+        attributes_dict = renpy.defaultstore.characterAttributes.get(self.name)
 
         if attributes_dict is None:
             return 0

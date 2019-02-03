@@ -387,6 +387,51 @@ adv = ADVCharacter(None,
 
                    kind=False)
 
+# Just going to implement the fattypy store in the default store till I can figure out how to create a customer one
+# TODO: Move to custom store for fattypy
+
+# The default DDCharacter
+dd = renpy.DDCharacter(None,
+                       who_prefix='',
+                       who_suffix='',
+                       what_prefix='',
+                       what_suffix='',
+
+                       show_function=renpy.show_display_say,
+                       predict_function=renpy.predict_show_display_say,
+
+                       condition=None,
+                       dynamic=False,
+                       image=None,
+
+                       interact=True,
+                       slow=True,
+                       slow_abortable=True,
+                       afm=True,
+                       ctc=None,
+                       ctc_pause=None,
+                       ctc_timedpause=None,
+                       ctc_position="nestled",
+                       all_at_once=False,
+                       with_none=None,
+                       callback=None,
+                       type='say',
+                       advance=True,
+
+                       who_style='say_label',
+                       what_style='say_dialogue',
+                       window_style='say_window',
+                       screen='say',
+                       mode='say',
+                       voice_tag=None,
+
+                       kind=False,
+
+                       attributes=None)
+
+# The character attribute store. A global dictionary is used to hopefully allow for saving in Renpy's store system
+characterAttributes = dict()
+
 # predict_say and who are defined in 00library.rpy, but we add default
 # versions here in case there is a problem with initialization. (And
 # for pickling purposes.)
