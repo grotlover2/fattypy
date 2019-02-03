@@ -27,6 +27,7 @@
 # updating.
 
 from __future__ import print_function
+from renpy.fattypy.DDCharacter import DDCharacter
 
 import renpy.display
 import renpy.test
@@ -535,7 +536,7 @@ def say_menu_with(expression, callback):
 fast_who_pattern = re.compile(r'[a-zA-Z_][a-zA-Z_0-9]*$')
 
 
-def eval_who(who, fast=None):
+def eval_who(who, fast=None, err_if_undfined = True):
     """
     Evaluates the `who` parameter to a say statement.
     """
@@ -556,7 +557,7 @@ def eval_who(who, fast=None):
         if rv is None:
             rv = renpy.python.store_dicts['store'].get(who, None)
 
-        if rv is None:
+        if err_if_undfined and rv is None:
             raise Exception("Sayer '%s' is not defined." % who.encode("utf-8"))
 
         return rv
@@ -1109,6 +1110,11 @@ def show_imspec(imspec, atl=None):
     at_list = [ renpy.python.py_eval(i) for i in at_list ]
 
     layer = renpy.exports.default_layer(layer, tag or name, expression and (tag is None))
+
+    # check if the first part of the name can eval to a character
+    who = eval_who(name[0], None, False)
+    if who is not None and isinstance(who, DDCharacter):
+        name = (who,) + name[1:]
 
     renpy.config.show(name,
                       at_list=at_list,

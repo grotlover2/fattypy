@@ -35,6 +35,7 @@ import renpy.display
 import renpy.audio
 
 from renpy.pyanalysis import const, pure, not_const
+from renpy.fattypy.DDCharacter import DDCharacter
 
 
 def renpy_pure(fn):
@@ -632,6 +633,10 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
 
     if not isinstance(name, tuple):
         name = tuple(name.split())
+
+    if isinstance(name[0], DDCharacter):
+        name[0].show(name, at_list, layer, what, zorder, tag, behind, atl, transient, munge_name)
+        return # kill it here since show will recall this method
 
     if zorder is None and not renpy.config.preserve_zorder:
         zorder = 0
