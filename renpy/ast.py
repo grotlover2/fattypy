@@ -1318,6 +1318,11 @@ class Hide(Node):
         elif len(self.imspec) == 7:
             name, _expression, tag, _at_list, layer, _zorder, _behind = self.imspec
 
+        if isinstance(name, tuple) and len(name) > 0:
+            who = eval_who(name[0], None, False)
+            if who is not None and isinstance(who, DDCharacter):
+                name = (who,) + name[1:]
+
         layer = renpy.exports.default_layer(layer, tag or name)
 
         renpy.config.hide(tag or name, layer)

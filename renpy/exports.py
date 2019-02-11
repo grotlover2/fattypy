@@ -427,6 +427,9 @@ def default_layer(layer, tag, expression=False):
     elif " " in tag:
         tag = tag.split()[0]
 
+    if isinstance(tag, DDCharacter):
+        tag = tag.get_img_tag().split()[0]
+
     return renpy.config.tag_layer.get(tag, renpy.config.default_tag_layer)
 
 
@@ -734,6 +737,10 @@ def hide(name, layer=None):
 
     if not isinstance(name, tuple):
         name = tuple(name.split())
+
+    if isinstance(name[0], DDCharacter):
+        name[0].hide(name, layer)
+        return # kill it here since hide will recall this method
 
     sls = scene_lists()
     key = name[0]

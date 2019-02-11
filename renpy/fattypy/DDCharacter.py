@@ -135,6 +135,15 @@ class DDCharacter(ADVCharacter):
 
         show(name, at_list, layer, what, zorder, tag, behind, atl, transient, munge_name)
 
+    def hide(self, name, layer=None):
+        from renpy.exports import hide
+
+        found_img_tag = tuple(self.get_img_tag().split())
+
+        name = found_img_tag + name[1:]
+
+        hide(name, layer)
+
     def register_comparator(self, comparator):
 
         if not isinstance(comparator, tuple):
