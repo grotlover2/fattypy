@@ -24,7 +24,7 @@ from renpy.character import ADVCharacter, NotSet
 
 class DDCharacter(ADVCharacter):
     def __init__(self, name=NotSet, kind=None, **properties):
-
+        self.sort = True
         self.comparators = list()
         if kind is None:
             kind = renpy.defaultstore.dd
@@ -145,6 +145,7 @@ class DDCharacter(ADVCharacter):
         hide(name, layer)
 
     def register_comparator(self, comparator):
+        self.sort = True
 
         if not isinstance(comparator, tuple):
             comparator = tuple(comparator.split(','))
@@ -153,6 +154,10 @@ class DDCharacter(ADVCharacter):
 
     def eval_comparators(self):
         image_tag = None
+
+        if self.sort:
+            self.comparators = sorted(self.comparators, key=lambda comp: len(comp), reverse=True)
+            self.sort = False
 
         for comparator in self.comparators:
             all_eval_true = True
