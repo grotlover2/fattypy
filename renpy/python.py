@@ -149,7 +149,7 @@ class StoreDict(dict):
             return EMPTY_DICT, EMPTY_SET
 
         # Force all DDCharacter objects to save every time
-        for key, value in newpy.iteritems():
+        for key, value in new.as_dict().iteritems():
             if key != "dd" and isinstance(value, DDCharacter):
                 rv[key] = value
 
