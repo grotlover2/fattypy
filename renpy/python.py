@@ -137,6 +137,7 @@ class StoreDict(dict):
             If true, this cycles the old changes to the new changes. If
             False, does not.
         """
+        from renpy.fattypy.DDCharacter import DDCharacter
 
         new = DictItems(self)
         rv = find_changes(self.old, new, deleted)
@@ -146,6 +147,11 @@ class StoreDict(dict):
 
         if rv is None:
             return EMPTY_DICT, EMPTY_SET
+
+        # Force all DDCharacter objects to save every time
+        for key, value in newpy.iteritems():
+            if key != "dd" and isinstance(value, DDCharacter):
+                rv[key] = value
 
         delta_ebc = set()
 
