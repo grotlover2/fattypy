@@ -26,6 +26,7 @@ class DDCharacter(ADVCharacter):
     def __init__(self, name=NotSet, kind=None, **properties):
         self.sort = True
         self.comparators = list()
+        self.attributes_dict = dict()
         if kind is None:
             kind = renpy.defaultstore.dd
 
@@ -73,53 +74,39 @@ class DDCharacter(ADVCharacter):
                 self.register_comparator(self.img_tag_map)
 
     def __setitem__(self, attribute, value):
-        # first time through if this character is not in the store add it
-        if self.name not in renpy.defaultstore.characterAttributes.keys():
-            renpy.defaultstore.characterAttributes[self.name] = dict()
-
-        attributes_dict = renpy.defaultstore.characterAttributes[self.name]
-
         # only update if the value will change or a new attribute is being added
-        if attribute not in attributes_dict.keys() or attributes_dict[attribute] != value:
-            attributes_dict[attribute] = value
+        if attribute not in self.attributes_dict.keys() or self.attributes_dict[attribute] != value:
+            self.attributes_dict[attribute] = value
 
             # update the image tag with the new value if it was set
             if self.image_tag is not None:
                 self.image_tag = self.get_img_tag()
 
     def __getitem__(self, attribute):
-        attributes_dict = renpy.defaultstore.characterAttributes.get(self.name)
-
-        if attributes_dict is None:
+        if self.attributes_dict is None:
             return None
 
-        return attributes_dict.get(attribute)
+        return self.attributes_dict.get(attribute)
 
     def __contains__(self, attribute):
-        attributes_dict = renpy.defaultstore.characterAttributes.get(self.name)
-
-        if attributes_dict is not None and attribute in attributes_dict.keys():
+        if self.attributes_dict is not None and attribute in self.attributes_dict.keys():
             return True
 
         return False
 
     def __delitem__(self, attribute):
-        attributes_dict = renpy.defaultstore.characterAttributes.get(self.name)
-
-        if attributes_dict is not None:
-            del attributes_dict[attribute]
+        if self.attributes_dict is not None:
+            del self.attributes_dict[attribute]
 
     # Used to prevent __len__ from being used for truth testing on the object
     def __nonzero__(self):
         return True
 
     def __len__(self):
-        attributes_dict = renpy.defaultstore.characterAttributes.get(self.name)
-
-        if attributes_dict is None:
+        if self.attributes_dict is None:
             return 0
 
-        return len(attributes_dict)
+        return len(self.attributes_dict)
 
     def show(self, name=None, at_list=[], layer=None, what=None, zorder=None, tag=None, behind=[], atl=None,
              transient=False, munge_name=True):
